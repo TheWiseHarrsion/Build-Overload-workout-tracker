@@ -61,39 +61,39 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
       />
 
       <div className="space-y-4">
-        <Card className="p-4">
+        <Card className="p-4" interactive={false}>
           <div className="grid grid-cols-3 gap-3 text-center">
             <div>
-              <p className="text-xl font-bold text-white">
+              <p className="tabular text-xl font-black text-[var(--text-primary)]">
                 {formatDuration(session.started_at, session.completed_at)}
               </p>
-              <p className="mt-1 text-xs text-[#a0a0a0]">Duration</p>
+              <p className="mt-1 text-xs font-medium text-[var(--text-secondary)]">Duration</p>
             </div>
             <div>
-              <p className="text-xl font-bold text-white">{completedSetCount}</p>
-              <p className="mt-1 text-xs text-[#a0a0a0]">Sets</p>
+              <p className="tabular text-xl font-black text-[var(--text-primary)]">{completedSetCount}</p>
+              <p className="mt-1 text-xs font-medium text-[var(--text-secondary)]">Sets</p>
             </div>
             <div>
-              <p className="text-xl font-bold text-white">{formatVolume(totalVolume)}</p>
-              <p className="mt-1 text-xs text-[#a0a0a0]">Volume</p>
+              <p className="tabular text-xl font-black text-[var(--text-primary)]">{formatVolume(totalVolume)}</p>
+              <p className="mt-1 text-xs font-medium text-[var(--text-secondary)]">Volume</p>
             </div>
           </div>
         </Card>
 
-        <Card className="p-4">
-          <p className="mb-2 text-xs text-[#a0a0a0]">Completed</p>
-          <p className="font-medium text-white">{formatDateTime(session.completed_at)}</p>
+        <Card className="p-4" interactive={false}>
+          <p className="mb-2 text-xs font-bold text-[var(--text-secondary)]">Completed</p>
+          <p className="font-semibold text-[var(--text-primary)]">{formatDateTime(session.completed_at)}</p>
         </Card>
 
         {session.notes && (
-          <Card className="p-4">
-            <p className="mb-2 text-xs text-[#a0a0a0]">Notes</p>
-            <p className="whitespace-pre-wrap text-sm text-white">{session.notes}</p>
+          <Card className="p-4" interactive={false}>
+            <p className="mb-2 text-xs font-bold text-[var(--text-secondary)]">Notes</p>
+            <p className="whitespace-pre-wrap text-sm leading-6 text-[var(--text-primary)]">{session.notes}</p>
           </Card>
         )}
 
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-white">Exercises</h2>
+          <h2 className="text-base font-bold text-[var(--text-primary)]">Exercises</h2>
           {session.session_exercises.map((exercise) => {
             const completedSets = exercise.exercise_sets
               .filter((set) => set.is_completed)
@@ -101,22 +101,22 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
             const exerciseVolume = calculateTotalSessionVolume(completedSets)
 
             return (
-              <Card key={exercise.id} className="p-4">
-                <h3 className="mb-3 font-semibold text-white">
+              <Card key={exercise.id} className="p-4" interactive={false}>
+                <h3 className="mb-3 text-lg font-black text-[var(--text-primary)]">
                   {exercise.exercises?.name || 'Exercise'}
                 </h3>
                 <div className="mb-4 grid grid-cols-3 gap-2 text-sm">
                   <div>
-                    <p className="text-xs text-[#a0a0a0]">Max Weight</p>
-                    <p className="font-medium text-white">{formatWeight(calculateMaxWeight(completedSets))}</p>
+                    <p className="text-xs text-[var(--text-secondary)]">Max Weight</p>
+                    <p className="tabular font-bold text-[var(--text-primary)]">{formatWeight(calculateMaxWeight(completedSets))}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-[#a0a0a0]">Best Reps</p>
-                    <p className="font-medium text-white">{formatReps(calculateBestReps(completedSets))}</p>
+                    <p className="text-xs text-[var(--text-secondary)]">Best Reps</p>
+                    <p className="tabular font-bold text-[var(--text-primary)]">{formatReps(calculateBestReps(completedSets))}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-[#a0a0a0]">Volume</p>
-                    <p className="font-medium text-white">{formatVolume(exerciseVolume)}</p>
+                    <p className="text-xs text-[var(--text-secondary)]">Volume</p>
+                    <p className="tabular font-bold text-[var(--text-primary)]">{formatVolume(exerciseVolume)}</p>
                   </div>
                 </div>
 
@@ -125,16 +125,16 @@ export default async function SessionDetailPage({ params }: SessionDetailPagePro
                     completedSets.map((set) => (
                       <div
                         key={set.id}
-                        className="flex items-center justify-between rounded-lg bg-[#0f0f0f] p-2 text-sm"
+                        className="flex items-center justify-between rounded-lg bg-white/[0.04] p-3 text-sm"
                       >
-                        <span className="text-[#a0a0a0]">Set {set.set_number}</span>
-                        <span className="font-medium text-white">
+                        <span className="tabular text-[var(--text-secondary)]">Set {set.set_number}</span>
+                        <span className="tabular font-bold text-[var(--text-primary)]">
                           {formatWeightAndReps(set.weight, set.reps)}
                         </span>
                       </div>
                     ))
                   ) : (
-                    <p className="text-sm text-[#a0a0a0]">No completed sets.</p>
+                    <p className="text-sm text-[var(--text-secondary)]">No completed sets.</p>
                   )}
                 </div>
               </Card>

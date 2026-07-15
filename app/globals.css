@@ -2,58 +2,152 @@
 
 @layer base {
   :root {
-    --accent-cyan: #06b6d4;
-    --accent-emerald: #10b981;
-    --accent-orange: #f97316;
-    --card-bg: #1a1a1a;
-    --input-bg: #0f0f0f;
-    --border-color: #333333;
-    --text-secondary: #a0a0a0;
-    --text-tertiary: #808080;
-  }
-
-  body {
-    @apply bg-black text-white;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    --background: #09090b;
+    --background-elevated: #111114;
+    --card-bg: #151519;
+    --card-bg-secondary: #1b1b20;
+    --input-bg: #101014;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --text-primary: #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-tertiary: #71717a;
+    --accent: #00ffff;
+    --accent-strong: #0ea5e9;
+    --accent-muted: rgba(56, 189, 248, 0.12);
+    --success: #22c55e;
+    --danger: #ef4444;
+    --warning: #f59e0b;
   }
 
   html {
     scroll-behavior: smooth;
+    background: var(--background);
+  }
+
+  body {
+    background:
+      radial-gradient(circle at 50% -20%, rgba(56, 189, 248, 0.08), transparent 34rem),
+      var(--background);
+    color: var(--text-primary);
+    font-family: var(--font-geist), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  * {
+    min-width: 0;
   }
 
   input[type="number"],
   input[type="text"],
   input[type="email"],
   input[type="password"],
+  select,
   textarea {
     @apply text-base;
+    font-size: 16px;
   }
 
   button {
-    @apply active:scale-95 transition-transform;
+    @apply rounded-xl border border-white/20 bg-slate-700/80 px-5 py-3 font-medium text-white shadow-sm backdrop-blur-sm transition-all duration-200 ease-out hover:bg-slate-600/90 hover:border-white/30 hover:shadow-md active:scale-[0.98] active:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:pointer-events-none disabled:opacity-50;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a {
+    @apply transition duration-150 ease-out active:scale-[0.99];
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::selection {
+    background: rgba(56, 189, 248, 0.32);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
 @layer components {
   .card {
-    @apply bg-[#1a1a1a] border border-[#333333] rounded-2xl;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)) var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
   }
 
   .btn-primary {
-    @apply px-6 py-3 bg-[#06b6d4] text-black font-semibold rounded-xl hover:bg-[#00afc4] disabled:opacity-50 disabled:cursor-not-allowed transition-all;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/20 bg-slate-700/80 px-5 py-3 text-sm font-medium text-white shadow-sm backdrop-blur-sm transition-all duration-200 ease-out hover:bg-slate-600/90 hover:border-white/30 hover:shadow-md active:scale-[0.98] active:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:pointer-events-none disabled:opacity-50;
   }
 
   .btn-secondary {
-    @apply px-6 py-3 bg-[#333333] text-white font-semibold rounded-xl hover:bg-[#444444] disabled:opacity-50 disabled:cursor-not-allowed transition-all;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-white/20 bg-slate-700/80 px-5 py-3 text-sm font-medium text-white shadow-sm backdrop-blur-sm transition-all duration-200 ease-out hover:bg-slate-600/90 hover:border-white/30 hover:shadow-md active:scale-[0.98] active:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:pointer-events-none disabled:opacity-50;
   }
 
   .btn-destructive {
-    @apply px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-45;
+    background: rgba(239, 68, 68, 0.13);
+    border: 1px solid rgba(239, 68, 68, 0.28);
+    color: #fca5a5;
+  }
+
+  .btn-ghost {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-transparent bg-transparent px-4 py-3 text-sm font-medium text-white/80 shadow-none transition-all duration-200 ease-out hover:border-white/15 hover:bg-white/5 hover:text-white active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-icon {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/20 bg-slate-700/80 p-0 text-white shadow-sm backdrop-blur-sm transition-all duration-200 ease-out hover:bg-slate-600/90 hover:border-white/30 hover:shadow-md active:scale-[0.98] active:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-slate {
+    @apply rounded-xl border border-white/20 bg-slate-700/80 px-5 py-3 font-medium text-white shadow-sm backdrop-blur-sm transition-all duration-200 ease-out hover:bg-slate-600/90 hover:border-white/30 active:scale-[0.98] active:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 disabled:pointer-events-none disabled:opacity-50;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 bg-[#0f0f0f] border border-[#333333] rounded-xl text-white placeholder-[#808080] focus:outline-none focus:border-[#06b6d4] transition-colors;
+    @apply min-h-12 w-full rounded-xl px-4 py-3 font-medium outline-none transition;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+  }
+
+  .input-field::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  .input-field:focus {
+    border-color: rgba(56, 189, 248, 0.68);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.14);
+  }
+
+  .top-glass {
+    background: rgba(9, 9, 11, 0.86);
+    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(18px);
+  }
+
+  .page-header-shell {
+    padding-top: max(1.25rem, calc(env(safe-area-inset-top) + 0.85rem));
+    padding-bottom: 1rem;
+  }
+
+  .page-header-spacer {
+    height: 1rem;
+  }
+
+  .quiet-glow {
+    transition: border-color 150ms ease, background-color 150ms ease, transform 150ms ease;
+  }
+
+  .quiet-glow:active {
+    border-color: rgba(56, 189, 248, 0.38);
   }
 
   .safe-bottom {
@@ -62,5 +156,22 @@
 
   .safe-top {
     padding-top: max(0.5rem, env(safe-area-inset-top));
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bottom-nav-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem;
+  }
+
+  .bottom-nav-item {
+    flex: 1 1 0 !important;
+    min-width: 0;
   }
 }

@@ -37,7 +37,7 @@ export function DeleteSessionButton({ sessionId, compact = false }: DeleteSessio
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="rounded-lg p-3 text-[#a0a0a0] hover:bg-[#2a2a2a] hover:text-red-400"
+          className="btn-icon hover:text-red-300"
           aria-label="Delete session"
         >
           <Trash2 className="h-5 w-5" />
@@ -63,7 +63,7 @@ export function DeleteSessionButton({ sessionId, compact = false }: DeleteSessio
           </div>
         }
       >
-        <p className="text-sm text-[#a0a0a0]">This permanently deletes this completed workout.</p>
+        <p className="text-sm leading-6 text-[var(--text-secondary)]">This permanently deletes this completed workout.</p>
       </Dialog>
 
       {toast && <Toast {...toast} onClose={() => setToast(null)} />}

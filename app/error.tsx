@@ -16,13 +16,15 @@ export default function Error({
   }, [error])
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4">
-      <div className="text-center">
-        <div className="flex justify-center mb-4">
-          <AlertCircle className="w-12 h-12 text-orange-500" />
+    <div className="flex min-h-dvh items-center justify-center bg-[var(--background)] px-4">
+      <div className="card max-w-sm p-6 text-center">
+        <div className="mb-4 flex justify-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-300">
+            <AlertCircle className="h-7 w-7" />
+          </div>
         </div>
-        <h1 className="text-3xl font-bold text-white mb-2">Something went wrong</h1>
-        <p className="text-[#a0a0a0] mb-6">An error occurred. Please try again.</p>
+        <h1 className="mb-2 text-2xl font-black text-[var(--text-primary)]">Something went wrong</h1>
+        <p className="mb-6 text-sm leading-6 text-[var(--text-secondary)]">An error occurred. Please try again.</p>
         <Button variant="primary" onClick={reset}>
           Try Again
         </Button>

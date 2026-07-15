@@ -2,10 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Dumbbell, TrendingUp, History } from 'lucide-react'
+import { Dumbbell, History, House, TrendingUp } from 'lucide-react'
 
 const NAV_ITEMS = [
-  { href: '/', label: 'Home', icon: Home },
+  { href: '/', label: 'Home', icon: House },
   { href: '/workouts', label: 'Workouts', icon: Dumbbell },
   { href: '/progress', label: 'Progress', icon: TrendingUp },
   { href: '/history', label: 'History', icon: History },
@@ -15,8 +15,22 @@ export function BottomNavigation() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 border-t border-[#333333] bg-[#0a0a0a] safe-bottom">
-      <div className="flex items-center justify-around">
+    <nav
+      className="safe-bottom fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--border-color)] bg-[rgba(17,17,20,0.72)]"
+      style={{
+        backdropFilter: 'blur(24px) saturate(1.35)',
+        WebkitBackdropFilter: 'blur(24px) saturate(1.35)',
+      }}
+    >
+      <div
+        className="bottom-nav-row mx-auto w-full max-w-2xl px-3 pt-2"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '0.25rem',
+        }}
+      >
         {NAV_ITEMS.map((item) => {
           const isActive =
             pathname === item.href ||
@@ -27,12 +41,19 @@ export function BottomNavigation() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex-1 flex flex-col items-center justify-center py-4 px-2 transition-colors ${
-                isActive ? 'text-[#06b6d4]' : 'text-[#a0a0a0] hover:text-white'
+              className={`bottom-nav-item flex min-h-14 flex-1 basis-0 flex-col items-center justify-center rounded-xl px-2 py-2 text-center transition ${
+                isActive
+                  ? 'bg-[var(--accent-muted)] text-[var(--accent)]'
+                  : 'text-[var(--text-tertiary)] hover:bg-white/[0.04] hover:text-[var(--text-primary)]'
               }`}
+              style={{
+                flex: '1 1 0',
+                minWidth: 0,
+              }}
+              aria-current={isActive ? 'page' : undefined}
             >
-              <Icon className="w-6 h-6 mb-1" />
-              <span className="text-xs font-medium">{item.label}</span>
+              <Icon className="mb-1 h-5 w-5" />
+              <span className="text-[11px] font-semibold leading-none">{item.label}</span>
             </Link>
           )
         })}

@@ -5,9 +5,12 @@ import { useEffect } from 'react'
 export function ServiceWorkerRegistration() {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch((error) => {
-        console.log('Service Worker registration failed:', error)
-      })
+      navigator.serviceWorker
+        .register('/sw.js')
+        .then((registration) => registration.update())
+        .catch((error) => {
+          console.log('Service Worker registration failed:', error)
+        })
     }
   }, [])
 

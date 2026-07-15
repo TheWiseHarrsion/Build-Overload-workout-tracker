@@ -15,9 +15,9 @@ export function Toast({ message, type = 'info', duration = 3000, onClose }: Toas
   }, [duration, onClose])
 
   const bgColor = {
-    success: 'bg-emerald-600',
-    error: 'bg-red-600',
-    info: 'bg-blue-600',
+    success: 'border-emerald-400/25 bg-emerald-500/15 text-emerald-100',
+    error: 'border-red-400/25 bg-red-500/15 text-red-100',
+    info: 'border-sky-400/25 bg-sky-500/15 text-sky-100',
   }
 
   const icon = {
@@ -27,10 +27,10 @@ export function Toast({ message, type = 'info', duration = 3000, onClose }: Toas
   }
 
   return (
-    <div className={`fixed bottom-4 right-4 left-4 sm:left-auto ${bgColor[type]} text-white rounded-lg p-4 flex items-center gap-3 shadow-lg z-40`}>
+    <div className={`safe-bottom fixed bottom-20 left-4 right-4 z-50 mx-auto flex max-w-md items-center gap-3 rounded-2xl border px-4 py-3 shadow-[0_18px_48px_rgba(0,0,0,0.38)] backdrop-blur sm:left-auto sm:right-4 sm:bottom-4 ${bgColor[type]}`}>
       {icon[type]}
-      <span className="flex-1">{message}</span>
-      <button onClick={onClose} className="p-1 hover:bg-white/20 rounded transition-colors">
+      <span className="flex-1 text-sm font-semibold">{message}</span>
+      <button onClick={onClose} className="rounded-lg p-2 transition-colors hover:bg-white/10" aria-label="Dismiss message">
         <X className="w-4 h-4" />
       </button>
     </div>

@@ -1,7 +1,8 @@
 import React from 'react'
+import { Spinner } from './spinner'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'destructive'
+  variant?: 'primary' | 'secondary' | 'destructive' | 'ghost' | 'icon'
   isLoading?: boolean
 }
 
@@ -17,6 +18,8 @@ export function Button({
     primary: 'btn-primary',
     secondary: 'btn-secondary',
     destructive: 'btn-destructive',
+    ghost: 'btn-ghost',
+    icon: 'btn-icon',
   }
 
   return (
@@ -25,7 +28,7 @@ export function Button({
       disabled={disabled || isLoading}
       {...props}
     >
-      {isLoading ? '...' : children}
+      {isLoading ? <Spinner className="h-4 w-4" /> : children}
     </button>
   )
 }

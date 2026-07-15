@@ -76,7 +76,7 @@ export function StartWorkoutButton({ templateId, className }: StartWorkoutButton
           </div>
         }
       >
-        <p className="text-sm text-[#a0a0a0]">
+        <p className="text-sm leading-6 text-[var(--text-secondary)]">
           You already have an unfinished workout. Continue it or discard it before starting this template.
         </p>
       </Dialog>

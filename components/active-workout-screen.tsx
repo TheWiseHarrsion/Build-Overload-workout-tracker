@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { CheckCircle2, Circle, Clock, Trash2, X } from 'lucide-react'
+import { Check, Clock, Dumbbell, Plus, Trash2, X } from 'lucide-react'
 import {
   addSetToExercise,
   cancelWorkoutSession,
@@ -50,9 +50,10 @@ export function ActiveWorkoutScreen({ session, previousValues }: ActiveWorkoutSc
     return map
   }, [previousValues])
 
-  const completedSetCount = Object.values(setsByExercise)
-    .flat()
-    .filter((set) => set.is_completed).length
+  const allSets = Object.values(setsByExercise).flat()
+  const completedSetCount = allSets.filter((set) => set.is_completed).length
+  const totalSetCount = allSets.length
+  const progress = totalSetCount ? Math.round((completedSetCount / totalSetCount) * 100) : 0
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -140,69 +141,92 @@ export function ActiveWorkoutScreen({ session, previousValues }: ActiveWorkoutSc
 
   return (
     <>
-      <div className="sticky top-0 z-30 -mx-4 border-b border-[#222222] bg-black/95 px-4 pb-4 pt-3 safe-top">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-bold text-white">{session.name}</h1>
-            <p className="mt-1 flex items-center gap-1 text-sm text-[#a0a0a0]">
-              <Clock className="h-4 w-4" />
-              {elapsed}
-            </p>
-          </div>
+      <header className="top-glass sticky top-0 z-30 -mx-4 px-4">
+        <div className="page-header-shell flex items-center justify-between gap-3">
           <button
             type="button"
             aria-label="Cancel workout"
-            className="rounded-xl p-3 text-[#a0a0a0] hover:bg-[#1a1a1a] hover:text-white"
+            className="btn-icon shrink-0"
             onClick={() => setShowCancel(true)}
           >
             <X className="h-5 w-5" />
           </button>
+          <div className="min-w-0 flex-1 text-center">
+            <h1 className="truncate text-lg font-black tracking-tight text-[var(--text-primary)]">{session.name}</h1>
+            <p className="mt-1 flex items-center justify-center gap-1 text-sm font-semibold text-[var(--text-secondary)]">
+              <Clock className="h-4 w-4" />
+              {elapsed}
+            </p>
+          </div>
+          <Button type="button" variant="primary" className="shrink-0 px-4" onClick={() => setShowFinish(true)}>
+            Finish
+          </Button>
         </div>
-      </div>
+      </header>
 
-      <div className="space-y-5 pb-28 pt-4">
+      <div className="space-y-4 pb-28">
+        <Card className="p-4" interactive={false}>
+          <div className="mb-3 flex items-center justify-between text-sm">
+            <span className="font-bold text-[var(--text-primary)]">
+              {completedSetCount} of {totalSetCount} sets completed
+            </span>
+            <span className="tabular font-black text-[var(--accent)]">{progress}%</span>
+          </div>
+          <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.08]">
+            <div className="h-full rounded-full bg-[var(--accent)]" style={{ width: `${progress}%` }} />
+          </div>
+        </Card>
+
         {session.session_exercises.map((exercise) => {
           const sets = setsByExercise[exercise.id] || []
+          const completedExerciseSets = sets.filter((set) => set.is_completed).length
+          const firstPrevious = previousMap.get(`${exercise.exercise_id}:1`)
+
           return (
-            <Card key={exercise.id} className="p-4">
-              <div className="mb-3 flex items-start justify-between gap-3">
+            <Card key={exercise.id} className="p-4" interactive={false}>
+              <div className="mb-4 flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-lg font-semibold text-white">
+                  <div className="mb-2 flex items-center gap-2 text-[var(--accent)]">
+                    <Dumbbell className="h-4 w-4" />
+                    <span className="text-xs font-bold">{completedExerciseSets}/{sets.length} sets</span>
+                  </div>
+                  <h2 className="text-xl font-black tracking-tight text-[var(--text-primary)]">
                     {exercise.exercises?.name || 'Exercise'}
                   </h2>
-                  <p className="text-xs text-[#a0a0a0]">
-                    Enter weight and reps, then tap the circle in Done to complete a set.
+                  <p className="mt-1 text-sm font-medium text-[var(--text-secondary)]">
+                    {exercise.exercises?.muscle_group || 'No muscle group'}
+                    {firstPrevious ? ` - Last time: ${formatWeightAndReps(firstPrevious.weight, firstPrevious.reps)}` : ''}
                   </p>
                 </div>
               </div>
 
-              <div className="mb-2 grid grid-cols-[2.2rem_1fr_4.8rem_4rem_3rem] gap-2 text-xs font-medium text-[#808080]">
+              <div className="grid grid-cols-[2.25rem_3.75rem_minmax(0,1fr)_minmax(0,1fr)_2.75rem] items-center gap-2 border-b border-[var(--border-color)] pb-2 text-center text-[11px] font-bold text-[var(--text-tertiary)]">
                 <span>Set</span>
-                <span>Previous</span>
-                <span>Weight</span>
+                <span>Prev</span>
+                <span>kg</span>
                 <span>Reps</span>
                 <span>Done</span>
               </div>
 
-              <div className="space-y-2">
+              <div className="divide-y divide-white/[0.06]">
                 {sets.map((set) => {
                   const previous = previousMap.get(`${exercise.exercise_id}:${set.set_number}`)
                   return (
                     <div
                       key={set.id}
-                      className={`grid grid-cols-[2.2rem_1fr_4.8rem_4rem_3rem] items-center gap-2 rounded-xl border p-2 ${
-                        set.is_completed
-                          ? 'border-[#06b6d4]/50 bg-[#062f38]'
-                          : 'border-[#333333] bg-[#0f0f0f]'
+                      className={`grid grid-cols-[2.25rem_3.75rem_minmax(0,1fr)_minmax(0,1fr)_2.75rem] items-center gap-2 py-3 ${
+                        set.is_completed ? 'rounded-xl bg-emerald-500/[0.08]' : ''
                       }`}
                     >
-                      <span className="text-sm font-medium text-white">{set.set_number}</span>
-                      <span className="truncate text-xs text-[#a0a0a0]">
-                        {previous ? formatWeightAndReps(previous.weight, previous.reps) : '-'}
+                      <span className="tabular text-center text-sm font-black text-[var(--text-primary)]">
+                        {set.set_number}
+                      </span>
+                      <span className="truncate text-center text-xs font-semibold text-[var(--text-tertiary)]">
+                        {previous ? `${previous.weight}x${previous.reps}` : '-'}
                       </span>
                       <input
                         aria-label={`Set ${set.set_number} weight`}
-                        className="input-field px-2 py-2 text-base"
+                        className="input-field tabular min-h-11 px-2 py-2 text-center text-lg font-black"
                         inputMode="decimal"
                         type="number"
                         min="0"
@@ -217,7 +241,7 @@ export function ActiveWorkoutScreen({ session, previousValues }: ActiveWorkoutSc
                       />
                       <input
                         aria-label={`Set ${set.set_number} repetitions`}
-                        className="input-field px-2 py-2 text-base"
+                        className="input-field tabular min-h-11 px-2 py-2 text-center text-lg font-black"
                         inputMode="numeric"
                         type="number"
                         min="0"
@@ -230,30 +254,29 @@ export function ActiveWorkoutScreen({ session, previousValues }: ActiveWorkoutSc
                         }
                         onBlur={() => saveSet(exercise.id, set)}
                       />
-                      <div className="flex items-center justify-end gap-1">
+                      <button
+                        type="button"
+                        aria-label={`${set.is_completed ? 'Uncomplete' : 'Complete'} set ${set.set_number}`}
+                        className={`mx-auto flex h-11 w-11 items-center justify-center rounded-xl border ${
+                          set.is_completed
+                            ? 'border-emerald-400/40 bg-emerald-400 text-black'
+                            : 'border-[var(--border-strong)] bg-white/[0.04] text-[var(--text-secondary)]'
+                        }`}
+                        onClick={() => saveSet(exercise.id, set, !set.is_completed)}
+                      >
+                        <Check className="h-5 w-5" />
+                      </button>
+                      {sets.length > 1 && (
                         <button
                           type="button"
-                          aria-label={`${set.is_completed ? 'Uncomplete' : 'Complete'} set ${set.set_number}`}
-                          className="rounded-lg p-2 text-[#06b6d4]"
-                          onClick={() => saveSet(exercise.id, set, !set.is_completed)}
+                          aria-label={`Remove set ${set.set_number}`}
+                          className="col-start-2 col-end-6 ml-auto mt-1 flex min-h-9 items-center gap-2 rounded-lg px-2 text-xs font-bold text-red-300"
+                          onClick={() => deleteSet(exercise.id, set.id)}
                         >
-                          {set.is_completed ? (
-                            <CheckCircle2 className="h-6 w-6" />
-                          ) : (
-                            <Circle className="h-6 w-6" />
-                          )}
+                          <Trash2 className="h-3.5 w-3.5" />
+                          Remove set
                         </button>
-                        {sets.length > 1 && (
-                          <button
-                            type="button"
-                            aria-label={`Remove set ${set.set_number}`}
-                            className="rounded-lg p-2 text-[#a0a0a0] hover:text-red-400"
-                            onClick={() => deleteSet(exercise.id, set.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
+                      )}
                     </div>
                   )
                 })}
@@ -266,22 +289,12 @@ export function ActiveWorkoutScreen({ session, previousValues }: ActiveWorkoutSc
                 onClick={() => addSet(exercise.id)}
                 isLoading={isPending}
               >
-                Add Another Set
+                <Plus className="h-4 w-4" />
+                Add Set
               </Button>
             </Card>
           )
         })}
-      </div>
-
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#333333] bg-black/95 p-4 safe-bottom">
-        <div className="mx-auto flex max-w-2xl gap-3">
-          <Button type="button" variant="secondary" className="flex-1" onClick={() => setShowCancel(true)}>
-            Cancel
-          </Button>
-          <Button type="button" variant="primary" className="flex-1" onClick={() => setShowFinish(true)}>
-            Finish
-          </Button>
-        </div>
       </div>
 
       <Dialog
@@ -307,9 +320,8 @@ export function ActiveWorkoutScreen({ session, previousValues }: ActiveWorkoutSc
       >
         <div className="space-y-4">
           {completedSetCount === 0 && (
-            <p className="rounded-xl border border-orange-500/30 bg-orange-500/10 p-3 text-sm text-orange-200">
-              No completed sets yet. Complete at least one set before finishing.
-              If you intended to save an empty workout, confirm with Finish Empty.
+            <p className="rounded-xl border border-orange-500/30 bg-orange-500/10 p-3 text-sm text-orange-100">
+              No completed sets yet. Confirm only if you intended to save an empty workout.
             </p>
           )}
           <textarea
@@ -337,7 +349,7 @@ export function ActiveWorkoutScreen({ session, previousValues }: ActiveWorkoutSc
           </div>
         }
       >
-        <p className="text-sm text-[#a0a0a0]">This deletes the active workout and all sets entered in it.</p>
+        <p className="text-sm leading-6 text-[var(--text-secondary)]">This deletes the active workout and all sets entered in it.</p>
       </Dialog>
 
       {toast && <Toast {...toast} onClose={() => setToast(null)} />}

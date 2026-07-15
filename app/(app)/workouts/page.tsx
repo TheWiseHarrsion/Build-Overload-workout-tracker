@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Edit2 } from 'lucide-react'
+import { ChevronRight, Dumbbell, Edit2, Plus } from 'lucide-react'
 import { createServerClient } from '@/lib/supabase/server'
 import { PageHeader } from '@/components/page-header'
 import { Button } from '@/components/ui/button'
@@ -30,9 +30,12 @@ export default async function WorkoutsPage() {
     <>
       <PageHeader
         title="Workouts"
+        description="Choose a template and get moving."
         action={
           <Link href="/workouts/new">
-            <Button variant="primary">New</Button>
+            <Button variant="icon" aria-label="Create workout">
+              <Plus className="h-5 w-5" />
+            </Button>
           </Link>
         }
       />
@@ -45,38 +48,48 @@ export default async function WorkoutsPage() {
             )
 
             return (
-              <Card key={template.id} className="p-4">
-                <div className="mb-3">
-                  <h3 className="text-lg font-semibold text-white">{template.name}</h3>
-                  {template.description && (
-                    <p className="mt-1 text-sm text-[#a0a0a0]">{template.description}</p>
-                  )}
+              <Card key={template.id} className="p-5">
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div>
+                    <h2 className="text-xl font-black tracking-tight text-[var(--text-primary)]">
+                      {template.name}
+                    </h2>
+                    <p className="mt-1 text-sm font-medium text-[var(--text-secondary)]">
+                      {exercises.length} exercise{exercises.length === 1 ? '' : 's'}
+                      {template.description ? ` - ${template.description}` : ''}
+                    </p>
+                  </div>
+                  <Link href={`/workouts/${template.id}`} className="btn-icon" aria-label={`Edit ${template.name}`}>
+                    <Edit2 className="h-4 w-4" />
+                  </Link>
                 </div>
 
                 {exercises.length > 0 ? (
-                  <div className="mb-4 text-sm text-[#a0a0a0]">
-                    <p className="mb-2 font-medium text-white">
-                      {exercises.length} exercise{exercises.length === 1 ? '' : 's'}
-                    </p>
-                    <ul className="space-y-1 text-xs">
-                      {exercises.slice(0, 5).map((templateExercise) => (
-                        <li key={templateExercise.id} className="truncate">
-                          - {templateExercise.exercises?.name || 'Exercise'} ({templateExercise.default_sets} sets)
-                        </li>
-                      ))}
-                      {exercises.length > 5 && <li>+ {exercises.length - 5} more</li>}
-                    </ul>
+                  <div className="mb-4 flex flex-wrap gap-2">
+                    {exercises.slice(0, 4).map((templateExercise) => (
+                      <span
+                        key={templateExercise.id}
+                        className="rounded-lg bg-white/[0.05] px-2.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)]"
+                      >
+                        {templateExercise.exercises?.name || 'Exercise'}
+                      </span>
+                    ))}
+                    {exercises.length > 4 && (
+                      <span className="rounded-lg bg-white/[0.05] px-2.5 py-1.5 text-xs font-semibold text-[var(--text-secondary)]">
+                        +{exercises.length - 4} more
+                      </span>
+                    )}
                   </div>
                 ) : (
-                  <p className="mb-4 text-sm text-[#a0a0a0]">No exercises added yet.</p>
+                  <p className="mb-4 rounded-xl border border-[var(--border-color)] bg-white/[0.03] p-3 text-sm text-[var(--text-secondary)]">
+                    No exercises added yet.
+                  </p>
                 )}
 
-                <div className="flex gap-2">
-                  <StartWorkoutButton templateId={template.id} className="w-full flex-1" />
-                  <Link href={`/workouts/${template.id}`}>
-                    <button className="btn-secondary p-3" aria-label={`Edit ${template.name}`}>
-                      <Edit2 className="h-4 w-4" />
-                    </button>
+                <div className="grid grid-cols-[1fr_auto] gap-3">
+                  <StartWorkoutButton templateId={template.id} className="w-full" />
+                  <Link href={`/workouts/${template.id}`} className="btn-secondary px-3" aria-label={`Open ${template.name}`}>
+                    <ChevronRight className="h-5 w-5" />
                   </Link>
                 </div>
               </Card>
@@ -86,10 +99,11 @@ export default async function WorkoutsPage() {
       ) : (
         <EmptyState
           title="No workouts yet"
-          description="Create your first workout template to get started."
+          description="Create your first template with exercises and default sets."
+          icon={<Dumbbell className="h-7 w-7" />}
           action={
             <Link href="/workouts/new">
-              <Button variant="primary">Create Template</Button>
+              <Button variant="primary">Create Workout</Button>
             </Link>
           }
         />

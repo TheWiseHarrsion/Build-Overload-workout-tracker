@@ -36,7 +36,7 @@ export default function NewWorkoutPage() {
     <>
       <PageHeader title="Create Workout" backHref="/workouts" />
 
-      <Card className="p-4">
+      <Card className="p-5" interactive={false}>
         <form onSubmit={createTemplate} className="space-y-4">
           <Input
             label="Workout Name"
@@ -46,7 +46,7 @@ export default function NewWorkoutPage() {
             required
           />
           <div>
-            <label className="mb-2 block text-sm font-medium text-white" htmlFor="description">
+            <label className="mb-2 block text-sm font-semibold text-[var(--text-primary)]" htmlFor="description">
               Description
             </label>
             <textarea
@@ -59,7 +59,7 @@ export default function NewWorkoutPage() {
             />
           </div>
           <Button type="submit" variant="primary" className="w-full" isLoading={isPending}>
-            Create and Add Exercises
+            Create Workout
           </Button>
         </form>
       </Card>

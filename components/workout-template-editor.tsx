@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, Dumbbell, Plus, Sparkles, Trash2 } from 'lucide-react'
 import {
   addExerciseToTemplate,
   createExercise,
@@ -43,6 +43,7 @@ export function WorkoutTemplateEditor({ template, exercises }: WorkoutTemplateEd
   const [newExerciseName, setNewExerciseName] = useState('')
   const [muscleGroup, setMuscleGroup] = useState('')
   const [showDelete, setShowDelete] = useState(false)
+  const [showCreateExercise, setShowCreateExercise] = useState(false)
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null)
 
   const availableExercises = useMemo(() => {
@@ -109,6 +110,7 @@ export function WorkoutTemplateEditor({ template, exercises }: WorkoutTemplateEd
         setNewExerciseName('')
         setMuscleGroup('')
         setDefaultSets('3')
+        setShowCreateExercise(false)
       }
       showResult(addResult, 'Exercise created and added')
     })
@@ -165,11 +167,11 @@ export function WorkoutTemplateEditor({ template, exercises }: WorkoutTemplateEd
     <>
       <PageHeader title="Edit Workout" backHref="/workouts" />
 
-      <div className="space-y-4">
-        <Card className="space-y-4 p-4">
+      <div className="space-y-5">
+        <Card className="space-y-5 p-5" interactive={false}>
           <Input label="Workout Name" value={name} onChange={(event) => setName(event.target.value)} />
           <div>
-            <label className="mb-2 block text-sm font-medium text-white" htmlFor="description">
+            <label className="mb-2 block text-sm font-semibold text-[var(--text-primary)]" htmlFor="description">
               Description
             </label>
             <textarea
@@ -185,21 +187,36 @@ export function WorkoutTemplateEditor({ template, exercises }: WorkoutTemplateEd
           </Button>
         </Card>
 
-        <Card className="space-y-3 p-4">
-          <h2 className="text-lg font-semibold text-white">Exercises</h2>
+        <Card className="space-y-4 p-5" interactive={false}>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Dumbbell className="h-5 w-5 text-[var(--accent)]" />
+              <h2 className="text-xl font-black tracking-tight text-[var(--text-primary)]">Exercises</h2>
+            </div>
+            <span className="rounded-lg bg-white/[0.05] px-2.5 py-1.5 text-xs font-bold text-[var(--text-secondary)]">
+              {items.length}
+            </span>
+          </div>
           {items.length === 0 ? (
-            <p className="text-sm text-[#a0a0a0]">Add at least one exercise before starting.</p>
+            <p className="rounded-xl border border-[var(--border-color)] bg-white/[0.03] p-4 text-sm text-[var(--text-secondary)]">
+              Add at least one exercise before starting.
+            </p>
           ) : (
             items.map((item, index) => (
-              <div key={item.id} className="rounded-xl border border-[#333333] bg-[#0f0f0f] p-3">
+              <div key={item.id} className="rounded-2xl border border-[var(--border-color)] bg-[var(--input-bg)] p-4">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-medium text-white">{item.exercises?.name || 'Exercise'}</p>
-                    <p className="text-xs text-[#a0a0a0]">{item.exercises?.muscle_group || 'No muscle group'}</p>
+                  <div className="flex gap-3">
+                    <span className="tabular mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/[0.06] text-sm font-black text-[var(--text-secondary)]">
+                      {index + 1}
+                    </span>
+                    <div>
+                      <p className="text-lg font-black tracking-tight text-[var(--text-primary)]">{item.exercises?.name || 'Exercise'}</p>
+                      <p className="mt-1 text-sm font-medium text-[var(--text-secondary)]">{item.exercises?.muscle_group || 'No muscle group'}</p>
+                    </div>
                   </div>
                   <button
                     type="button"
-                    className="rounded-lg p-2 text-[#a0a0a0] hover:bg-[#1a1a1a] hover:text-red-400"
+                    className="btn-icon hover:text-red-300"
                     onClick={() => remove(item.id)}
                     aria-label="Remove exercise"
                   >
@@ -218,7 +235,7 @@ export function WorkoutTemplateEditor({ template, exercises }: WorkoutTemplateEd
                   />
                   <button
                     type="button"
-                    className="mt-7 rounded-xl bg-[#1a1a1a] p-3 text-white disabled:opacity-40"
+                    className="btn-icon mt-7 disabled:opacity-40"
                     disabled={index === 0}
                     onClick={() => move(index, -1)}
                     aria-label="Move exercise up"
@@ -227,7 +244,7 @@ export function WorkoutTemplateEditor({ template, exercises }: WorkoutTemplateEd
                   </button>
                   <button
                     type="button"
-                    className="mt-7 rounded-xl bg-[#1a1a1a] p-3 text-white disabled:opacity-40"
+                    className="btn-icon mt-7 disabled:opacity-40"
                     disabled={index === items.length - 1}
                     onClick={() => move(index, 1)}
                     aria-label="Move exercise down"
@@ -240,8 +257,21 @@ export function WorkoutTemplateEditor({ template, exercises }: WorkoutTemplateEd
           )}
         </Card>
 
-        <Card className="space-y-4 p-4">
-          <h2 className="text-lg font-semibold text-white">Add Existing Exercise</h2>
+        <Card className="space-y-5 p-5" interactive={false}>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-black tracking-tight text-[var(--text-primary)]">Add Exercise</h2>
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">Choose from your exercise library.</p>
+            </div>
+            <button
+              type="button"
+              className="btn-secondary px-3"
+              onClick={() => setShowCreateExercise(true)}
+            >
+              <Sparkles className="h-4 w-4" />
+              Create
+            </button>
+          </div>
           <select
             className="input-field"
             value={selectedExerciseId}
@@ -264,24 +294,8 @@ export function WorkoutTemplateEditor({ template, exercises }: WorkoutTemplateEd
             onChange={(event) => setDefaultSets(event.target.value)}
           />
           <Button type="button" variant="secondary" className="w-full" onClick={addExistingExercise} disabled={!selectedExerciseId} isLoading={isPending}>
-            <Plus className="mr-2 inline h-4 w-4" />
+            <Plus className="h-4 w-4" />
             Add Exercise
-          </Button>
-        </Card>
-
-        <Card className="space-y-4 p-4">
-          <h2 className="text-lg font-semibold text-white">Create Exercise</h2>
-          <Input label="Exercise Name" value={newExerciseName} onChange={(event) => setNewExerciseName(event.target.value)} />
-          <select className="input-field" value={muscleGroup} onChange={(event) => setMuscleGroup(event.target.value)}>
-            <option value="">Muscle group (optional)</option>
-            {muscleGroups.map((group) => (
-              <option key={group} value={group}>
-                {group}
-              </option>
-            ))}
-          </select>
-          <Button type="button" variant="secondary" className="w-full" onClick={createAndAddExercise} disabled={!newExerciseName.trim()} isLoading={isPending}>
-            Create and Add
           </Button>
         </Card>
 
@@ -306,7 +320,59 @@ export function WorkoutTemplateEditor({ template, exercises }: WorkoutTemplateEd
           </div>
         }
       >
-        <p className="text-sm text-[#a0a0a0]">This deletes the template only. Completed workout history remains.</p>
+        <p className="text-sm leading-6 text-[var(--text-secondary)]">This deletes the template only. Completed workout history remains.</p>
+      </Dialog>
+
+      <Dialog
+        isOpen={showCreateExercise}
+        onClose={() => setShowCreateExercise(false)}
+        title="Create Exercise"
+        actions={
+          <div className="flex w-full gap-3">
+            <Button type="button" variant="secondary" className="flex-1" onClick={() => setShowCreateExercise(false)}>
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="primary"
+              className="flex-1"
+              onClick={createAndAddExercise}
+              disabled={!newExerciseName.trim()}
+              isLoading={isPending}
+            >
+              Add
+            </Button>
+          </div>
+        }
+      >
+        <div className="space-y-5">
+          <Input
+            label="Exercise Name"
+            placeholder="Incline Dumbbell Press"
+            value={newExerciseName}
+            onChange={(event) => setNewExerciseName(event.target.value)}
+          />
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-[var(--text-primary)]">Muscle Group</label>
+            <select className="input-field" value={muscleGroup} onChange={(event) => setMuscleGroup(event.target.value)}>
+              <option value="">Optional</option>
+              {muscleGroups.map((group) => (
+                <option key={group} value={group}>
+                  {group}
+                </option>
+              ))}
+            </select>
+          </div>
+          <Input
+            label="Default Sets"
+            type="number"
+            min="1"
+            max="20"
+            inputMode="numeric"
+            value={defaultSets}
+            onChange={(event) => setDefaultSets(event.target.value)}
+          />
+        </div>
       </Dialog>
 
       {toast && <Toast {...toast} onClose={() => setToast(null)} />}

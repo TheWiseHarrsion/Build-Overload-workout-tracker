@@ -39,11 +39,11 @@ interface ProgressExplorerProps {
 }
 
 const metricLabels: Record<Metric, string> = {
-  maxWeight: 'Maximum Weight',
-  bestReps: 'Best Repetitions',
-  bestSetVolume: 'Best Set Volume',
-  totalVolume: 'Total Session Volume',
-  estimated1RM: 'Estimated 1RM',
+  maxWeight: 'Max Weight',
+  bestReps: 'Best Reps',
+  bestSetVolume: 'Set Volume',
+  totalVolume: 'Total Volume',
+  estimated1RM: 'Est. 1RM',
 }
 
 const rangeLabels: Record<Range, string> = {
@@ -74,6 +74,7 @@ export function ProgressExplorer({ exercises, sessions }: ProgressExplorerProps)
   const [metric, setMetric] = useState<Metric>('maxWeight')
   const [range, setRange] = useState<Range>('6m')
   const [now] = useState(() => Date.now())
+  const selectedExercise = exercises.find((exercise) => exercise.id === exerciseId)
 
   const chartData = useMemo(() => {
     const cutoff =
@@ -121,129 +122,150 @@ export function ProgressExplorer({ exercises, sessions }: ProgressExplorerProps)
 
   return (
     <div className="space-y-4">
-      <div>
-        <label className="mb-2 block text-sm font-medium text-white" htmlFor="exercise">
-          Exercise
-        </label>
-        <select
-          id="exercise"
-          className="input-field"
-          value={exerciseId}
-          onChange={(event) => setExerciseId(event.target.value)}
-        >
-          {exercises.map((exercise) => (
-            <option key={exercise.id} value={exercise.id}>
-              {exercise.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <p className="mb-2 text-sm font-medium text-white">Metric</p>
-        <div className="grid grid-cols-2 gap-2">
-          {(Object.keys(metricLabels) as Metric[]).map((key) => (
-            <button
-              type="button"
-              key={key}
-              onClick={() => setMetric(key)}
-              className={`min-h-11 rounded-xl px-3 py-2 text-xs font-medium ${
-                metric === key ? 'bg-[#06b6d4] text-black' : 'bg-[#1a1a1a] text-[#a0a0a0]'
-              }`}
-            >
-              {metricLabels[key]}
-            </button>
-          ))}
+      <Card className="space-y-4 p-4" interactive={false}>
+        <div>
+          <label className="mb-2 block text-sm font-bold text-[var(--text-primary)]" htmlFor="exercise">
+            Exercise
+          </label>
+          <select
+            id="exercise"
+            className="input-field"
+            value={exerciseId}
+            onChange={(event) => setExerciseId(event.target.value)}
+          >
+            {exercises.map((exercise) => (
+              <option key={exercise.id} value={exercise.id}>
+                {exercise.name}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
 
-      <div>
-        <p className="mb-2 text-sm font-medium text-white">Range</p>
-        <div className="grid grid-cols-5 gap-2">
-          {(Object.keys(rangeLabels) as Range[]).map((key) => (
-            <button
-              type="button"
-              key={key}
-              onClick={() => setRange(key)}
-              className={`min-h-11 rounded-xl px-2 py-2 text-xs font-medium ${
-                range === key ? 'bg-[#06b6d4] text-black' : 'bg-[#1a1a1a] text-[#a0a0a0]'
-              }`}
-            >
-              {rangeLabels[key]}
-            </button>
-          ))}
+        <div>
+          <p className="mb-2 text-sm font-bold text-[var(--text-primary)]">Metric</p>
+          <div className="grid grid-cols-2 gap-2">
+            {(Object.keys(metricLabels) as Metric[]).map((key) => (
+              <button
+                type="button"
+                key={key}
+                onClick={() => setMetric(key)}
+                className={`min-h-11 rounded-xl px-3 py-2 text-sm font-bold ${
+                  metric === key ? 'bg-[var(--accent)] text-black' : 'bg-white/[0.05] text-[var(--text-secondary)]'
+                }`}
+              >
+                {metricLabels[key]}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+
+        <div>
+          <p className="mb-2 text-sm font-bold text-[var(--text-primary)]">Range</p>
+          <div className="grid grid-cols-5 gap-2">
+            {(Object.keys(rangeLabels) as Range[]).map((key) => (
+              <button
+                type="button"
+                key={key}
+                onClick={() => setRange(key)}
+                className={`min-h-11 rounded-xl px-2 py-2 text-sm font-bold ${
+                  range === key ? 'bg-[var(--accent)] text-black' : 'bg-white/[0.05] text-[var(--text-secondary)]'
+                }`}
+              >
+                {rangeLabels[key]}
+              </button>
+            ))}
+          </div>
+        </div>
+      </Card>
 
       {chartData.length > 0 ? (
-        <Card className="p-4">
-          <div className="mb-3">
-            <h2 className="font-semibold text-white">{metricLabels[metric]}</h2>
-            <p className="text-sm text-[#a0a0a0]">
-              {chartData.length} completed session{chartData.length === 1 ? '' : 's'} with this exercise.
-            </p>
+        <Card className="p-4" interactive={false}>
+          <div className="mb-4 flex items-start justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-black text-[var(--text-primary)]">{selectedExercise?.name || 'Exercise'}</h2>
+              <p className="text-sm text-[var(--text-secondary)]">{metricLabels[metric]}</p>
+            </div>
+            {stats && (
+              <div className="text-right">
+                <p className="tabular text-xl font-black text-[var(--text-primary)]">{formatMetric(metric, stats.current)}</p>
+                <p className={`tabular text-sm font-bold ${stats.percentChange >= 0 ? 'text-emerald-300' : 'text-red-300'}`}>
+                  {stats.percentChange > 0 ? '+' : ''}
+                  {formatPercentage(stats.percentChange)}
+                </p>
+              </div>
+            )}
           </div>
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#333333" />
-                <XAxis dataKey="date" stroke="#808080" tick={{ fontSize: 12 }} />
-                <YAxis stroke="#808080" tick={{ fontSize: 12 }} />
+              <LineChart data={chartData} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
+                <XAxis dataKey="date" stroke="#71717A" tick={{ fontSize: 12, fill: '#A1A1AA' }} tickLine={false} axisLine={false} />
+                <YAxis stroke="#71717A" tick={{ fontSize: 12, fill: '#A1A1AA' }} tickLine={false} axisLine={false} width={42} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1a1a1a',
-                    border: '1px solid #333333',
-                    borderRadius: '8px',
-                    color: '#ffffff',
+                    backgroundColor: '#151519',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    borderRadius: '12px',
+                    color: '#fafafa',
                   }}
+                  labelStyle={{ color: '#A1A1AA' }}
                   formatter={(value) => formatMetric(metric, Number(value))}
                 />
                 <Line
                   type="monotone"
                   dataKey={metric}
-                  stroke="#06b6d4"
-                  strokeWidth={2}
-                  dot={{ fill: '#06b6d4', r: 4 }}
-                  activeDot={{ r: 6 }}
+                  stroke="#38BDF8"
+                  strokeWidth={3}
+                  dot={{ fill: '#38BDF8', r: 3 }}
+                  activeDot={{ r: 5 }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </Card>
       ) : (
-        <Card className="p-8 text-center text-sm text-[#a0a0a0]">
-          Complete this exercise in at least one workout to see progress.
+        <Card className="p-8 text-center" interactive={false}>
+          <p className="text-sm font-medium text-[var(--text-secondary)]">
+            Complete this exercise in at least one workout to see progress.
+          </p>
         </Card>
       )}
 
       {stats && (
         <div className="grid grid-cols-2 gap-3">
-          <Card className="p-4">
-            <p className="mb-2 text-xs text-[#a0a0a0]">Current Best</p>
-            <p className="text-xl font-bold text-white">{formatMetric(metric, stats.current)}</p>
+          <Card className="p-4" interactive={false}>
+            <p className="mb-2 text-xs font-bold text-[var(--text-secondary)]">Current Best</p>
+            <p className="tabular text-xl font-black text-[var(--text-primary)]">{formatMetric(metric, stats.current)}</p>
           </Card>
-          <Card className="p-4">
-            <p className="mb-2 text-xs text-[#a0a0a0]">Previous Best</p>
-            <p className="text-xl font-bold text-white">{formatMetric(metric, stats.previous)}</p>
+          <Card className="p-4" interactive={false}>
+            <p className="mb-2 text-xs font-bold text-[var(--text-secondary)]">Previous Best</p>
+            <p className="tabular text-xl font-black text-[var(--text-primary)]">{formatMetric(metric, stats.previous)}</p>
           </Card>
-          <Card className="p-4">
-            <p className="mb-2 text-xs text-[#a0a0a0]">Change</p>
-            <p className={`text-xl font-bold ${stats.percentChange >= 0 ? 'text-[#10b981]' : 'text-red-400'}`}>
-              {stats.percentChange > 0 ? '+' : ''}
-              {formatPercentage(stats.percentChange)}
-            </p>
-          </Card>
-          <Card className="p-4">
-            <p className="mb-2 text-xs text-[#a0a0a0]">Personal Record</p>
-            <p className="text-xl font-bold text-white">
+          <Card className="p-4" interactive={false}>
+            <p className="mb-2 text-xs font-bold text-[var(--text-secondary)]">Personal Record</p>
+            <p className="tabular text-xl font-black text-[var(--text-primary)]">
               {formatMetric(metric, stats.personalRecord)}
             </p>
           </Card>
-          <Card className="col-span-2 p-4">
-            <p className="mb-2 text-xs text-[#a0a0a0]">Sessions</p>
-            <p className="text-xl font-bold text-white">{stats.sessions}</p>
+          <Card className="p-4" interactive={false}>
+            <p className="mb-2 text-xs font-bold text-[var(--text-secondary)]">Sessions</p>
+            <p className="tabular text-xl font-black text-[var(--text-primary)]">{stats.sessions}</p>
           </Card>
         </div>
+      )}
+
+      {chartData.length > 0 && (
+        <Card className="p-4" interactive={false}>
+          <h2 className="mb-3 text-base font-bold text-[var(--text-primary)]">Progression History</h2>
+          <div className="space-y-2">
+            {chartData.slice().reverse().map((point) => (
+              <div key={`${point.timestamp}-${point[metric]}`} className="flex items-center justify-between rounded-xl bg-white/[0.04] p-3">
+                <span className="text-sm font-semibold text-[var(--text-secondary)]">{point.date}</span>
+                <span className="tabular text-sm font-black text-[var(--text-primary)]">{formatMetric(metric, point[metric])}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
       )}
     </div>
   )

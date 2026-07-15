@@ -4,7 +4,7 @@ import './globals.css'
 import { ServiceWorkerRegistration } from '@/components/service-worker-registration'
 
 const geist = Geist({
-  variable: '--font-geist-sans',
+  variable: '--font-geist',
   subsets: ['latin'],
 })
 
@@ -31,7 +31,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#000000',
+  themeColor: '#09090B',
 }
 
 export default function RootLayout({
@@ -48,7 +48,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Overload" />
         <link rel="apple-touch-icon" href="/icon.svg" />
       </head>
-      <body className="antialiased bg-black text-white">
+      <body className="bg-[var(--background)] text-[var(--text-primary)] antialiased">
         <ServiceWorkerRegistration />
         {children}
       </body>

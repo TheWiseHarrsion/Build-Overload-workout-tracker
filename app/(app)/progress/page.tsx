@@ -31,14 +31,14 @@ export default async function ProgressPage() {
 
   return (
     <>
-      <PageHeader title="Progress" />
+      <PageHeader title="Progress" description="Training analytics that stay readable." />
       {exercises.length > 0 ? (
         <ProgressExplorer exercises={exercises} sessions={sessions} />
       ) : (
         <EmptyState
           title="No exercises found"
           description="Create a workout and complete sets to start tracking progress."
-          icon={<TrendingUp className="h-12 w-12" />}
+          icon={<TrendingUp className="h-7 w-7" />}
         />
       )}
     </>
