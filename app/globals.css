@@ -1,26 +1,66 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --accent-cyan: #06b6d4;
+    --accent-emerald: #10b981;
+    --accent-orange: #f97316;
+    --card-bg: #1a1a1a;
+    --input-bg: #0f0f0f;
+    --border-color: #333333;
+    --text-secondary: #a0a0a0;
+    --text-tertiary: #808080;
+  }
+
+  body {
+    @apply bg-black text-white;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  input[type="number"],
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    @apply text-base;
+  }
+
+  button {
+    @apply active:scale-95 transition-transform;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .card {
+    @apply bg-[#1a1a1a] border border-[#333333] rounded-2xl;
+  }
+
+  .btn-primary {
+    @apply px-6 py-3 bg-[#06b6d4] text-black font-semibold rounded-xl hover:bg-[#00afc4] disabled:opacity-50 disabled:cursor-not-allowed transition-all;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 bg-[#333333] text-white font-semibold rounded-xl hover:bg-[#444444] disabled:opacity-50 disabled:cursor-not-allowed transition-all;
+  }
+
+  .btn-destructive {
+    @apply px-6 py-3 bg-red-600 text-white font-semibold rounded-xl hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-[#0f0f0f] border border-[#333333] rounded-xl text-white placeholder-[#808080] focus:outline-none focus:border-[#06b6d4] transition-colors;
+  }
+
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+
+  .safe-top {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+  }
 }
